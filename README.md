@@ -85,8 +85,7 @@ microphone:
     - delay: 3s        
     - voice_assistant.start
   ```
-- 
-These lines of code are added to "on_tts_end"
+- These lines of code are added to "on_tts_end"
 ```
   on_tts_end: 
     - delay: 200ms
