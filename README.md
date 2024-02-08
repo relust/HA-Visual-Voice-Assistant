@@ -130,12 +130,19 @@ These lines of code are added to "on_tts_end"
 ```
 - Then these lines of code are added to "on__end"
 ```
+ on_end:
     - delay: 100ms
     - homeassistant.service:        
         service: media_player.turn_off
         data:
           entity_id: ${external_media_player_video}
 ```
+- If you don't use the "mute_pin" switch, add the wake word listening restart to "on_end"
+```
+on_end:
+    - delay: 2s
+    - switch.turn_on: use_wake_word 
+``` 
 - And at the end, add the mute_pin switch
 ```
 switch:
