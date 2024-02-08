@@ -71,6 +71,79 @@ microphone:
     - delay: 3s      
     - switch.turn_off: mute_pin
 ```
+- If you don't have the possibility to modify the microphone hardware, you can put instead of "switch.turn_on: mute_pin" - "- switch.turn_off: use_wake_word" and instead of "switch.turn_off: mute_pin" - "- voice_assistant.start". It works but stopping and restarting the "use_wake_word" service can cause some problems when listening to the wake word is restarted if the delay times are not set properly.
+  ```
+  on_wake_word_detected:
+    - switch.turn_off: use_wake_word
+    - delay: 100ms
+    - homeassistant.service:        
+        service: media_player.play_media
+        data:
+          entity_id: ${external_media_player_video}
+          media_content_id: ${awake_video}
+          media_content_type: video/mp4
+    - delay: 3s        
+    - voice_assistant.start
+  ```
 - 
-If you don't have the possibility to modify the microphone hardware, you can put instead of "switch.turn_on: mute_pin" - "- switch.turn_off: use_wake_word" and instead of "switch.turn_off: mute_pin" - "- voice_assistant.start"
-
+These lines of code are added to "on_tts_end"
+```
+  on_tts_end: 
+    - delay: 200ms
+    - light.turn_on:
+        id: led
+        blue: 0%
+        red: 0%
+        green: 100%
+        brightness: 60%
+        effect: none
+    - delay: 200ms
+    - homeassistant.service:        
+        service: media_player.turn_off
+        data:
+          entity_id: ${external_media_player_video}
+    - delay: 200ms
+    - homeassistant.service:        
+        service: media_player.play_media
+        data:
+          entity_id: ${external_media_player_video}
+          media_content_id: ${speech_video}
+          media_content_type: video/mp4    
+    - delay: 600ms
+    - homeassistant.service:        
+        service: media_player.play_media
+        data:
+          entity_id: ${external_media_player_audio}
+          media_content_id: !lambda return x;
+          media_content_type: audio/mpeg 
+```
+- Add these lines of code to "on_tts_stream_end"
+```
+  on_tts_stream_end:
+    - delay: 800ms
+    - homeassistant.service:        
+        service: media_player.turn_off
+        data:
+          entity_id: ${external_media_player_video}
+#    - delay: 100ms
+#    - script.execute: reset_led 
+```
+- Then these lines of code are added to "on__end"
+```
+    - delay: 100ms
+    - homeassistant.service:        
+        service: media_player.turn_off
+        data:
+          entity_id: ${external_media_player_video}
+```
+- And at the end, add the mute_pin switch
+```
+switch:
+  - platform: gpio
+    pin: 
+      number: GPIO17
+      inverted: true
+    name: MUTE
+    id: mute_pin
+    restore_mode: RESTORE_DEFAULT_OFF
+```
