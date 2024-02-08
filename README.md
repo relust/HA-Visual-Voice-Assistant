@@ -71,7 +71,7 @@ microphone:
     - delay: 3s      
     - switch.turn_off: mute_pin
 ```
-- If you don't have the possibility to modify the microphone hardware, you can put instead of "switch.turn_on: mute_pin" - "- switch.turn_off: use_wake_word" and instead of "switch.turn_off: mute_pin" - "- voice_assistant.start". It works but stopping and restarting the "use_wake_word" service can cause some problems when listening to the wake word is restarted if the delay times are not set properly.
+- If you don't have the possibility to modify the microphone wiring, you can put instead of "switch.turn_on: mute_pin" - "- switch.turn_off: use_wake_word" and instead of "switch.turn_off: mute_pin" - "- voice_assistant.start". It works but stopping and restarting the "use_wake_word" service can cause some problems when listening to the wake word is restarted if the delay times are not set properly.
   ```
   on_wake_word_detected:
     - switch.turn_off: use_wake_word
