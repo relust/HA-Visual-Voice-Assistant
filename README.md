@@ -42,5 +42,35 @@ substitutions:
   external_media_player_video: "media_player.ha_display_browser_2"
   display_switch: "switch.ha_display_ecran"
 ```
-
+- At "microphone" change the channel to "left"
+```
+microphone:
+  - platform: i2s_audio
+    id: board_microphone
+    adc_type: external
+    i2s_din_pin: GPIO16
+    pdm: false
+    channel: left
+```
+- To "on_wake_word_detected" add these lines of code
+```
+  on_wake_word_detected:
+    - switch.turn_on: mute_pin
+    - delay: 100ms
+    - homeassistant.service:  
+        service: homeassistant.turn_on
+        data: 
+          entity_id: ${display_switch}      
+    - delay: 100ms
+    - homeassistant.service:        
+        service: media_player.play_media
+        data:
+          entity_id: ${external_media_player_video}
+          media_content_id: ${awake_video}
+          media_content_type: video/mp4
+    - delay: 3s      
+    - switch.turn_off: mute_pin
+```
+- 
+If you don't have the possibility to modify the microphone hardware, you can put instead of "switch.turn_on: mute_pin" - "- switch.turn_off: use_wake_word" and instead of "switch.turn_off: mute_pin" - "- voice_assistant.start"
 
