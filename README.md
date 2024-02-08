@@ -28,5 +28,6 @@ https://youtu.be/fuX6IYa79gA
 ## Instructions
 - Install Fully kiosk browser on android tablet and Fully Kiosk Browser integration on Home Assistant.
 - Install Browser Mod integration with HACS.
+![DIAGRAMA ESP32 + MIC + LED+MUTE PIN](https://github.com/relust/HA-Visual-Voice-Assistant/assets/71765276/ef8ceb16-26eb-4534-bd59-bb8b53847da5)
 
 
