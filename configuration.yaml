@@ -1,0 +1,6 @@
+shell_command:
+  random_responses: bash /share/voice_assistant/en/random.sh
+homeassistant:
+  media_dirs:
+    local: /media
+    assist_responses: /share/voice_assistant
