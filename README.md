@@ -12,8 +12,6 @@ https://youtu.be/fuX6IYa79gA
 ## Features
 
 - wake word, push to talk, on-demand and continuous conversation support
-- response playback
-- audio media player
 - service exposed in HA to start and stop the voice assistant from another device/trigger
 - visual feedback of the wake word listening/audio recording/success/error status via the satellite LEDs
 - visual feedback on the tablet display
@@ -26,12 +24,12 @@ https://youtu.be/fuX6IYa79gA
 - ESPHome 2023.11.6 or newer
 
 ## Instructions
-- Install Fully kiosk browser on android tablet and Fully Kiosk Browser integration on Home Assistant.
-- Install Browser Mod integration with HACS.
-- Mount the esp32 satellite as in the diagram or, if you have already done, modify the microphone L/R pin to be connected to a digital pin which is then added in code to mute_pin.
+- Install Fully kiosk browser on android tablet and Fully Kiosk Browser integration on Home Assistant. The fully kiosk media player of android tablet will be used to stream aduio tts responses.
+- Install Browser Mod integration with HACS. The browser mod media player of android tablet will be used to stream video files awake.mp4 - whtn wake word is detected, and no_sound_speech.mp4 - when audio tts is streamed.
+- Mount the esp32 satellite as in the diagram or, if you have already done one, modify the microphone L/R pin to be connected to a digital pin which is then added in code to mute_pin.
 ![DIAGRAMA ESP32 + MIC + LED+MUTE PIN](https://github.com/relust/HA-Visual-Voice-Assistant/assets/71765276/ef8ceb16-26eb-4534-bd59-bb8b53847da5)
 
-- In the EspHome addon interface to the satellite you are making, copy the code from the Visual EspVoice file and and modify the code with your data.
+- In the EspHome addon interface to the satellite you are making, copy the code from the ”Visual EspVoice” file and and modify the code with your data.
   
 - If you already have your Esp32 satellite setup, make the following changes:
 - Add the following lines of code to the substitutions:
@@ -154,3 +152,5 @@ switch:
     id: mute_pin
     restore_mode: RESTORE_DEFAULT_OFF
 ```
+- On share directory of Home Assistant, create a new directory ”voice_assistant” where copy the content of [share/voice_assistant directory](https://github.com/relust/HA-Visual-Voice-Assistant/tree/main/share/voice_assistant) from this github page.
+- Copy content of ”configuration.yaml” and ”automation.yaml” files form this github page to Home assistant ”configuration.yaml” and ”automation.yaml” and make the necessary changes according to your configuration.
