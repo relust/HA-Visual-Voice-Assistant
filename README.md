@@ -159,5 +159,5 @@ switch:
 - Copy content of  [configuration.yaml](https://github.com/relust/HA-Visual-Voice-Assistant/blob/main/configuration.yaml) to configuration.yaml directory of Home Assistant to make the shell services to run "random.sh" and change language scripts from share/voice_assistant directory.
 - Copy content of  [automation.yaml](https://github.com/relust/HA-Visual-Voice-Assistant/blob/main/automation.yaml) and make the necessary changes according to your configuration to make automations for change video responses when wake word is detected and, optionally, to change assistants.
 - Restart Home Assistant.
-- On "Developer Tools/services" page tape "shell_command.random_responses", press CALL SERVICE and check if the script is executed.
-- On "Settings/automations" page search "Assist change language" automation and and check if the automation and check if the automation is good and is executed when the wake word is detected.
+- On [Developer Tools/services](https://my.home-assistant.io/redirect/developer-tools/service/) page tape "shell_command.random_responses", press CALL SERVICE and check if the script is executed.
+- On [Settings/automations](https://my.home-assistant.io/redirect/automation/dashboard/) page search "Assist change language" automation and and check if the automation and check if the automation is good and is executed when the wake word is detected.
