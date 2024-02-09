@@ -13,3 +13,103 @@
   - service: shell_command.random_responses
     data: {}
   mode: single
+
+- id: '1707462452385'
+  alias: Assist change language
+  description: 'change assistants and pipelines'
+  trigger:
+  - platform: conversation
+    command:
+    - speak in romanian
+    - vorbesc cu gearvis
+    - vorbesc cu jarvis
+    - I wish to speak in romanian
+    - Aș vrea să vorbesc cu charms
+    - Aș vrea să vorbesc cu Jarvis
+    - I wish to speak Romanian
+    - I wish to speak in Romanian language
+    id: change to romanian jarvis
+  - platform: conversation
+    command:
+    - vorbesc în engleză
+    - doresc să vorbesc în engleză
+    - aș vrea să vorbesc în engleză
+    - aș vrea să vorbesc în limba engleză
+    id: change to english jarvis
+  - platform: conversation
+    command:
+    - vorbesc cu șeila
+    - vorbesc cu che la
+    - aș vrea să vorbesc cu che la
+    - doresc să vorbesc cu che la
+    id: change to romanian sheila
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - change to romanian jarvis
+      sequence:
+      - service: select.select_first
+        metadata: {}
+        data: {}
+        target:
+          entity_id: select.visual_espvoice_pipeline_assist #pipeline of Esp32Voice satellite change with yours
+      - service: shell_command.romanian_jarvis_responses
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 0
+      - service: shell_command.random_responses
+        data: {}
+      - set_conversation_response: ' " "'
+    - conditions:
+      - condition: trigger
+        id:
+        - change to english jarvis
+      sequence:
+      - service: select.select_first
+        metadata: {}
+        data: {}
+        target:
+          entity_id: select.visual_espvoice_pipeline_assist #pipeline of Esp32Voice satellite change with yours
+      - service: select.select_next
+        metadata: {}
+        data: {}
+        target:
+          entity_id: select.visual_espvoice_pipeline_assist #pipeline of Esp32Voice satellite change with yours
+      - service: shell_command.english_jarvis_responses
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 0
+      - service: shell_command.random_responses
+        data: {}
+      - set_conversation_response: '" " '
+    - conditions:
+      - condition: trigger
+        id:
+        - change to romanian sheila
+      sequence:
+      - service: select.select_last
+        metadata: {}
+        data: {}
+        target:
+          entity_id: select.visual_espvoice_pipeline_assist #pipeline of Esp32Voice satellite change with yours
+      - service: shell_command.romanian_sheila_responses
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 0
+      - service: shell_command.random_responses
+        data: {}
+      - set_conversation_response: ' " "'
+  mode: single
+
