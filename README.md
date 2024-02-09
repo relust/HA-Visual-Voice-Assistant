@@ -31,7 +31,8 @@ https://youtu.be/fuX6IYa79gA
 - Mount the esp32 satellite as in the diagram or, if you have already done, modify the microphone L/R pin to be connected to a digital pin which is then added in code to mute_pin.
 ![DIAGRAMA ESP32 + MIC + LED+MUTE PIN](https://github.com/relust/HA-Visual-Voice-Assistant/assets/71765276/ef8ceb16-26eb-4534-bd59-bb8b53847da5)
 
-- In the EspHome addon interface to the satellite you are making, copy the code from the EspVoice file and and modify the code with your data.
+- In the EspHome addon interface to the satellite you are making, copy the code from the Visual EspVoice file and and modify the code with your data.
+  
 - If you already have your Esp32 satellite setup, make the following changes:
 - Add the following lines of code to the substitutions:
 ```
