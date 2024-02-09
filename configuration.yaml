@@ -1,5 +1,8 @@
 shell_command:
-  random_responses: bash /share/voice_assistant/en/random.sh
+  random_responses: bash /share/voice_assistant/random.sh
+  english_jarvis_responses: bash /share/voice_assistant/change_to_enghlish_jarvis_responses.sh
+  romanian_jarvis_responses: bash /share/voice_assistant/change_to_romanian_jarvis_responses.sh
+  romanian_sheila_responses: bash /share/voice_assistant/change_to_romanian_sheila_responses.sh
 homeassistant:
   media_dirs:
     local: /media
