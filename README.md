@@ -7,7 +7,7 @@ Through this project I wanted to add to the voice assistant made in Home Assista
 To achieve this, I will use an esp32 satellite programmed with [ESPHome](https://www.esphome.io/). and a androit wall mounted tablet.
  Here's a small demo:
 
-[https://youtu.be/fuX6IYa79gA](https://youtu.be/EcL6o62Vnoo)
+[https://youtu.be/EcL6o62Vnoo](https://youtu.be/EcL6o62Vnoo)
 
 ## Features
 
