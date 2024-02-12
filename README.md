@@ -5,6 +5,8 @@
 Ever since voice satellites [were introduced](https://www.home-assistant.io/blog/2023/04/27/year-of-the-voice-chapter-2/#composing-voice-assistants) to [Home Assistant](https://www.home-assistant.io/), people wanted to use good microphones and speakers for this purpose, but this is, still, a work in progress.
 Through this project I wanted to add to the voice assistant made in Home Assistant a visual image and random personalized responses that are displayed on an android tablet.
 To achieve this, I will use an esp32 satellite programmed with [ESPHome](https://www.esphome.io/). and a androit wall mounted tablet.
+![Sheila tubnail](https://github.com/relust/HA-Visual-Voice-Assistant/assets/71765276/08d3d385-fdaa-4300-8eb7-a7f1e438e330)
+
  Here's a small demo:
 
 [https://youtu.be/EcL6o62Vnoo](https://youtu.be/EcL6o62Vnoo)
