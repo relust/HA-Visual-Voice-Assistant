@@ -1,0 +1,33 @@
+{
+  "config": {
+    "error": {
+    },
+    "step": {
+      "user": {
+        "data": {
+          "name": "Name",
+          "stream_source": "Stream URL (RTSP/RTMP/HTTP)",
+          "camera_entity_id": "Camera Entity"
+        },
+        "description": "Select camera `entity_id` or stream `source`"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "stream_source": "Stream URL (RTSP/RTMP/HTTP)",
+          "camera_entity_id": "Camera Entity",
+          "player_entity_id": "Player Entity",
+          "browser_id": "Browser ID",
+          "stt_start_media": "STT start media",
+          "speech_gif": "Speech Gif",
+          "listen_gif": "Listen Gif",
+          "pipeline_id": "Pipeline (Settings > Voice Assistant)"
+
+        }
+      }
+    }
+  }
+}
