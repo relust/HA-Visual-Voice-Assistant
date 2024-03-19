@@ -7,11 +7,12 @@ substitutions:
   wifi_ap_password: "password"
   api_encription_key: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"# copy api key from your configuration
   ota_password: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"# copy ota passwowrd from your configuration
-  awake_video: "media-source://media_source/assist_responses/awake.mp4"#path to video file to respont on wake word detected
-  speech_video: "media-source://media_source/assist_responses/no_sound_speech.mp4"#patth to video file to see when tts responses is stremed 
-  external_media_player_audio: "media_player.ha_display_fully_kiosk"# android tablet media player from fully kiosk browser
-  external_media_player_video: "media_player.ha_display_browser_mod"# android tablet media player from browser mod
   display_switch: "switch.ha_display_ecran_fully_kiosk"# android tablet display switch from fully kiosk browser
+  silent_sound: "media-source://media_source/local/5minsilence.wav"
+  speech_url: "http://192.168.0.182:8123/local/gifs/sheila_speech.gif" 
+  listen_url: "http://192.168.0.182:8123/local/gifs/sheila_listen.gif"  
+  external_media_player: "media_player.boxa_din_bucatarie"
+  random_messages: "{{ ['cu ce pot să te ajut', 'spune te rog', 'da, te ascult'] | random }}"
 
 esphome:
   name: ${name}
@@ -153,19 +154,37 @@ voice_assistant:
 
     - switch.turn_on: mute_pin 
     #- switch.turn_off: use_wake_word" #If you don't have the possibility to modify the microphone wiring for mute switch
+ #   - delay: 100ms
+ #   - homeassistant.service:  
+ #       service: homeassistant.turn_on
+ #       data: 
+ #         entity_id: ${display_switch}      
     - delay: 100ms
-    - homeassistant.service:  
-        service: homeassistant.turn_on
-        data: 
-          entity_id: ${display_switch}      
-    - delay: 100ms
-    - homeassistant.service:        
-        service: media_player.play_media
-        data:
-          entity_id: ${external_media_player_video}
-          media_content_id: ${awake_video}
-          media_content_type: video/mp4
-    - delay: 3s      
+    - homeassistant.service:
+        service: media_player.play_media      
+        data_template:
+          entity_id: ${external_media_player}
+          media_content_id: "media-source://tts/edge_tts?message=${random_messages}&language=ro-RO-AlinaNeural"
+          media_content_type: "audio"
+          extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${speech_url}" }]}}'
+
+#########  THIS IS FOR GOOGLE HOME SPEAKERS CHIME SOUND #######
+#    - if:
+#        condition:
+#          switch.is_on: google_speaker_status
+#        then:
+#          - delay: 100ms 
+#        else:
+#          - delay: 2s  
+    - delay: 1500ms 
+    - homeassistant.service:
+        service: media_player.play_media      
+        data_template:
+          entity_id: ${external_media_player}
+          media_content_id: ${silent_sound}
+          media_content_type: "audio"
+          extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${listen_url}" }]}}'
+ 
     - switch.turn_off: mute_pin
     #- voice_assistant.start#If you don't have the possibility to modify the microphone wiring for mute switch
 
@@ -202,26 +221,16 @@ voice_assistant:
         data:
           entity_id: ${external_media_player_video}
     - delay: 200ms
-    - homeassistant.service:        
+    - homeassistant.service:
         service: media_player.play_media
-        data:
-          entity_id: ${external_media_player_video}
-          media_content_id: ${speech_video} #this is no sound speach video to play when tts is streamed
-          media_content_type: video/mp4    
-    - delay: 600ms
-    - homeassistant.service:        
-        service: media_player.play_media
-        data:
-          entity_id: ${external_media_player_audio}
-          media_content_id: !lambda return x; # this is tts response
-          media_content_type: audio/mpeg 
+        data_template:
+          entity_id: ${external_media_player}
+          media_content_id: !lambda return x;
+          media_content_type: "music"
+          extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${speech_url}" }]}}'
 
   on_tts_stream_end:
     - delay: 800ms
-    - homeassistant.service:        
-        service: media_player.turn_off
-        data:
-          entity_id: ${external_media_player_video}
     - delay: 100ms
     - script.execute: reset_led 
       
@@ -229,11 +238,7 @@ voice_assistant:
     - delay: 100ms
     - script.execute: reset_led
     - delay: 100ms
-    - homeassistant.service:        
-        service: media_player.turn_off
-        data:
-          entity_id: ${external_media_player_video}
-#    - delay: 2s
+    - switch.turn_off: mute_pin 
 #    - switch.turn_on: use_wake_word # this is if not have mute switch
   on_error:
     - light.turn_on:
@@ -369,7 +374,12 @@ switch:
     pin: 
       number: GPIO17
       inverted: true
-
+#########  THIS IS FOR GOOGLE HOME SPEAKERS CHIME SOUND - IS NEED A AUTOMATION IN HA TO TURN OFF WHEN SPEAKER IS OFF #######
+#  - platform: template
+#    name: Google speaker status
+#    id: google_speaker_status
+#    optimistic: true
+#    restore_mode: RESTORE_DEFAULT_ON
 
 
 
