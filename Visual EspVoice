@@ -172,14 +172,14 @@ voice_assistant:
           media_content_id: "media-source://tts/${tts_service}?message=${random_messages}&language=${tts_language}"
           media_content_type: "audio"
           extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${speech_url}" }]}}'
-    - delay: 100ms
-    - homeassistant.service:
-        service: browser_mod.popup     
-        data_template:
-          entity_id: ${external_media_player}
-          browser_id: ${browser_id}
-          content: '{"type": "picture", "image": "${speech_url}"}'
-          style: "--popup-min-width: 800px"
+#    - delay: 100ms
+#    - homeassistant.service:
+#        service: browser_mod.popup     
+#        data_template:
+#          entity_id: ${external_media_player}
+#          browser_id: ${browser_id}
+#          content: '{"type": "picture", "image": "${speech_url}"}'
+#          style: "--popup-min-width: 800px"
 
 #########  THIS IS FOR GOOGLE HOME SPEAKERS CHIME SOUND #######
 #    - if:
@@ -197,14 +197,14 @@ voice_assistant:
           media_content_id: ${silent_sound}
           media_content_type: "audio"
           extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${listen_url}" }]}}'
-    - delay: 100ms
-    - homeassistant.service:
-        service: browser_mod.popup     
-        data_template:
-          entity_id: ${external_media_player}
-          browser_id: ${browser_id}
-          content: '{"type": "picture", "image": "${listen_url}"}'
-          style: "--popup-min-width: 800px" 
+#    - delay: 100ms
+#    - homeassistant.service:
+#        service: browser_mod.popup     
+#        data_template:
+#          entity_id: ${external_media_player}
+#          browser_id: ${browser_id}
+#          content: '{"type": "picture", "image": "${listen_url}"}'
+#          style: "--popup-min-width: 800px" 
     - switch.turn_off: mute_pin
     #- voice_assistant.start#If you don't have the possibility to modify the microphone wiring for mute switch
 
@@ -243,14 +243,14 @@ voice_assistant:
           media_content_id: !lambda return x;
           media_content_type: "music"
           extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${speech_url}" }]}}'
-    - delay: 100ms
-    - homeassistant.service:
-        service: browser_mod.popup     
-        data_template:
-          entity_id: ${external_media_player}
-          browser_id: ${browser_id}
-          content: '{"type": "picture", "image": "${speech_url}"}'
-          style: "--popup-min-width: 800px"
+#    - delay: 100ms
+#    - homeassistant.service:
+#        service: browser_mod.popup     
+#        data_template:
+#          entity_id: ${external_media_player}
+#          browser_id: ${browser_id}
+#          content: '{"type": "picture", "image": "${speech_url}"}'
+#          style: "--popup-min-width: 800px"
 
   on_tts_stream_end:
     - delay: 100ms
