@@ -114,7 +114,7 @@ microphone:
 ```
 - If you don't have the possibility to modify the microphone wiring, you can put instead of "switch.turn_on: mute_pin" - "- switch.turn_off: use_wake_word" and instead of "switch.turn_off: mute_pin" - "- voice_assistant.start". It works but stopping and restarting the "use_wake_word" service can cause some problems when listening to the wake word is restarted if the delay times are not set properly.
 - If you use a google display or a google speaker, uncomment section provided that the delay is longer if initially the speaker is turned off and because of this it will play the chime sounds first.
-- If you're using a tablet with a browser running the Home Assistant interface or the Home Assistant app, uncomment sections with the browser_mod.popup service
+- If you're using a tablet with a browser running the Home Assistant interface or the Home Assistant app, uncomment sections with the browser_mod.popup service and with tablet display turn_on switch.
 - These lines of code are added to "on_tts_end"
 ```
   on_tts_end: 
