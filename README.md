@@ -35,14 +35,14 @@ To achieve this, I will use an esp32 satellite programmed with [ESPHome](https:/
 - In the EspHome addon interface to the satellite you are making, copy the code from the ”Visual EspVoice” file and and modify the code with your data.
   
 - If you already have your Esp32 satellite setup, make the following changes:
-- Add the following lines of code to the substitutions:
+- Add the following lines of code to the substitutions and complete with your data:
 ```
 substitutions:
   external_media_player: "media_player.office_speaker"
   browser_id: "ha_display_browser" #android tablet browser_id from browser_mod
   display_switch: "switch.ha_display_ecran"# android tablet display switch from fully kiosk browser
-  speech_url: "http://192.168.0.182:8123/local/gifs/sheila_speech.gif" 
-  listen_url: "http://192.168.0.182:8123/local/gifs/sheila_listen.gif"
+  speech_url: "http://192.168.0.xxx:8123/local/gifs/sheila_speech.gif" 
+  listen_url: "http://192.168.0.xxx:8123/local/gifs/sheila_listen.gif"
   silent_sound: "media-source://media_source/local/5minsilence.wav"
   tts_service: "edge_tts"
   tts_language: "ro-RO-AlinaNeural"
