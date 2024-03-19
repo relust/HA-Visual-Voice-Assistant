@@ -136,7 +136,7 @@ microphone:
 #          style: "--popup-min-width: 800px"
 ```
 - If you're using a tablet with a browser running the Home Assistant interface or the Home Assistant app, uncomment sections with the browser_mod.popup service
-- Add these lines of code to "on_tts_stream_end" if you're using a tablet with a browser running the Home Assistant interface or the Home Assistant app, uncomment sections with the browser_mod.close_popup service
+- If you're using a tablet with a browser running the Home Assistant interface or the Home Assistant app, add these lines of code to "on_tts_stream_end"  with the browser_mod.close_popup service
 ```
   on_tts_stream_end:
     - delay: 100ms
