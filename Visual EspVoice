@@ -7,12 +7,17 @@ substitutions:
   wifi_ap_password: "password"
   api_encription_key: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"# copy api key from your configuration
   ota_password: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"# copy ota passwowrd from your configuration
-  display_switch: "switch.ha_display_ecran_fully_kiosk"# android tablet display switch from fully kiosk browser
-  silent_sound: "media-source://media_source/local/5minsilence.wav"
+  #################################################
+  external_media_player: "media_player.office_speaker"
+  browser_id: "ha_display_browser" #android tablet browser_id from browser_mod
+  display_switch: "switch.ha_display_ecran"# android tablet display switch from fully kiosk browser
   speech_url: "http://192.168.0.182:8123/local/gifs/sheila_speech.gif" 
-  listen_url: "http://192.168.0.182:8123/local/gifs/sheila_listen.gif"  
-  external_media_player: "media_player.boxa_din_bucatarie"
-  random_messages: "{{ ['cu ce pot să te ajut', 'spune te rog', 'da, te ascult'] | random }}"
+  listen_url: "http://192.168.0.182:8123/local/gifs/sheila_listen.gif"
+  silent_sound: "media-source://media_source/local/5minsilence.wav"
+  tts_service: "edge_tts"
+  tts_language: "ro-RO-AlinaNeural"
+  random_messages: "{{ ['how can I help you', 'yes, im listening', 'how can assist you'] | random }}"  
+  #random_messages: "{{ ['cu ce pot să te ajut', 'spune te rog', 'da, te ascult'] | random }}"
 
 esphome:
   name: ${name}
@@ -160,23 +165,31 @@ voice_assistant:
  #       data: 
  #         entity_id: ${display_switch}      
     - delay: 100ms
-    - homeassistant.service:
+     - homeassistant.service:
         service: media_player.play_media      
         data_template:
           entity_id: ${external_media_player}
-          media_content_id: "media-source://tts/edge_tts?message=${random_messages}&language=ro-RO-AlinaNeural"
+          media_content_id: "media-source://tts/${tts_service}?message=${random_messages}&language=${tts_language}"
           media_content_type: "audio"
           extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${speech_url}" }]}}'
+    - delay: 100ms
+    - homeassistant.service:
+        service: browser_mod.popup     
+        data_template:
+          entity_id: ${external_media_player}
+          browser_id: ${browser_id}
+          content: '{"type": "picture", "image": "${speech_url}"}'
+          style: "--popup-min-width: 800px"
 
 #########  THIS IS FOR GOOGLE HOME SPEAKERS CHIME SOUND #######
 #    - if:
 #        condition:
 #          switch.is_on: google_speaker_status
 #        then:
-#          - delay: 100ms 
+#          - delay: 200ms 
 #        else:
-#          - delay: 2s  
-    - delay: 1500ms 
+#          - delay: 2s
+    - delay: 1300ms             
     - homeassistant.service:
         service: media_player.play_media      
         data_template:
@@ -184,7 +197,14 @@ voice_assistant:
           media_content_id: ${silent_sound}
           media_content_type: "audio"
           extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${listen_url}" }]}}'
- 
+    - delay: 100ms
+    - homeassistant.service:
+        service: browser_mod.popup     
+        data_template:
+          entity_id: ${external_media_player}
+          browser_id: ${browser_id}
+          content: '{"type": "picture", "image": "${listen_url}"}'
+          style: "--popup-min-width: 800px" 
     - switch.turn_off: mute_pin
     #- voice_assistant.start#If you don't have the possibility to modify the microphone wiring for mute switch
 
@@ -216,11 +236,6 @@ voice_assistant:
         brightness: 60%
         effect: none
     - delay: 200ms
-    - homeassistant.service:        
-        service: media_player.turn_off
-        data:
-          entity_id: ${external_media_player_video}
-    - delay: 200ms
     - homeassistant.service:
         service: media_player.play_media
         data_template:
@@ -228,11 +243,24 @@ voice_assistant:
           media_content_id: !lambda return x;
           media_content_type: "music"
           extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${speech_url}" }]}}'
+    - delay: 100ms
+    - homeassistant.service:
+        service: browser_mod.popup     
+        data_template:
+          entity_id: ${external_media_player}
+          browser_id: ${browser_id}
+          content: '{"type": "picture", "image": "${speech_url}"}'
+          style: "--popup-min-width: 800px"
 
   on_tts_stream_end:
-    - delay: 800ms
     - delay: 100ms
-    - script.execute: reset_led 
+    - script.execute: reset_led
+    - delay: 100ms
+    - homeassistant.service:
+        service: browser_mod.close_popup     
+        data_template:
+          entity_id: ${external_media_player}
+          browser_id: ${browser_id}
       
   on_end:
     - delay: 100ms
@@ -240,6 +268,12 @@ voice_assistant:
     - delay: 100ms
     - switch.turn_off: mute_pin 
 #    - switch.turn_on: use_wake_word # this is if not have mute switch
+    - delay: 100ms 
+    - homeassistant.service:
+        service: browser_mod.close_popup     
+        data_template:
+          entity_id: ${external_media_player}
+          browser_id: ${browser_id}
   on_error:
     - light.turn_on:
         id: led
