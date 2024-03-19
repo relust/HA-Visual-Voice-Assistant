@@ -184,7 +184,7 @@ switch:
 - Press "Save" and "Install" on EspHome addon interface.
 - Configure EspVoice satellite in "settings/integrations" page of home assistant.
 - Check "Allow the device to make Home Assistant service calls" from the "CONFIGURE" button of the Esp32 satellite.
-- On share directory of Home Assistant, create a new directory ”voice_assistant” where copy the content of [share/voice_assistant directory](https://github.com/relust/HA-Visual-Voice-Assistant/tree/main/share/voice_assistant) from this github page.
+- On local directory of Home Assistant, `/config/www`, create a new directory ”gifs” where copy the content of [www/gifs directory](https://github.com/relust/HA-Visual-Voice-Assistant/tree/main/www/gifs) and [silent sound](https://github.com/relust/HA-Visual-Voice-Assistant/tree/main/www/media) to home assistant `media` directory from this github page.
 - Copy content of  [configuration.yaml](https://github.com/relust/HA-Visual-Voice-Assistant/blob/main/configuration.yaml) to configuration.yaml directory of Home Assistant to make the shell services to run "random.sh" and change language scripts from share/voice_assistant directory.
 - Copy content of  [automation.yaml](https://github.com/relust/HA-Visual-Voice-Assistant/blob/main/automation.yaml) and make the necessary changes according to your configuration to make automations for change video responses when wake word is detected and, optionally, to change assistants.
 - Restart Home Assistant.
