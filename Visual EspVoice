@@ -13,7 +13,7 @@ substitutions:
   display_switch: "switch.ha_display_ecran"# android tablet display switch from fully kiosk browser
   speech_url: "http://192.168.0.182:8123/local/gifs/sheila_speech.gif" 
   listen_url: "http://192.168.0.182:8123/local/gifs/sheila_listen.gif"
-  silent_sound: "media-source://media_source/local/5minsilence.wav"
+  silent_sound: "media-source://media_source/gifs/5minsilence.wav"
   tts_service: "edge_tts"
   tts_language: "ro-RO-AlinaNeural"
   random_messages: "{{ ['how can I help you', 'yes, im listening', 'how can assist you'] | random }}"  
