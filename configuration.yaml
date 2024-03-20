@@ -5,4 +5,4 @@ shell_command:
 homeassistant:
   media_dirs:
     local: /media
-    local: /gifs
+    gifs: /config/wwww/gifs
