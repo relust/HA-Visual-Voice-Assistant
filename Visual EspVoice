@@ -165,7 +165,7 @@ voice_assistant:
  #       data: 
  #         entity_id: ${display_switch}      
     - delay: 100ms
-     - homeassistant.service:
+    - homeassistant.service:
         service: media_player.play_media      
         data_template:
           entity_id: ${external_media_player}
