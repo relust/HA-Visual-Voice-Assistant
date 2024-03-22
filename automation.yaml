@@ -1,99 +1,142 @@
-- id: '1707462452385'
-  alias: Assist change language
-  description: 'change assistants and pipelines'
+- id: '1711100044845'
+  alias: Assist Google speaker status
+  description: ''
   trigger:
-  - platform: conversation
-    command:
-    - speak in romanian
-    - vorbesc cu gearvis
-    - vorbesc cu jarvis
-    - I wish to speak in romanian
-    - Aș vrea să vorbesc cu charms
-    - Aș vrea să vorbesc cu Jarvis
-    - I wish to speak Romanian
-    - I wish to speak in Romanian language
-    id: change to romanian jarvis
-  - platform: conversation
-    command:
-    - vorbesc în engleză
-    - doresc să vorbesc în engleză
-    - aș vrea să vorbesc în engleză
-    - aș vrea să vorbesc în limba engleză
-    id: change to english jarvis
-  - platform: conversation
-    command:
-    - vorbesc cu șeila
-    - vorbesc cu che la
-    - aș vrea să vorbesc cu che la
-    - doresc să vorbesc cu che la
-    id: change to romanian sheila
+  - platform: state
+    entity_id:
+    - media_player.boxa_din_bucatarie
+    to: idle
+    id: kitchen display on
+  - platform: state
+    entity_id:
+    - media_player.boxa_din_bucatarie
+    to: 'off'
+    id: kitchen display off
   condition: []
   action:
   - choose:
     - conditions:
       - condition: trigger
         id:
-        - change to romanian jarvis
+        - kitchen display on
       sequence:
-      - service: select.select_first
+      - service: switch.turn_on
         metadata: {}
         data: {}
         target:
-          entity_id: select.visual_espvoice_pipeline_assist #pipeline of Esp32Voice satellite change with yours
-      - service: shell_command.romanian_jarvis_responses
-        data: {}
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 1
-          milliseconds: 0
-      - service: shell_command.random_responses
-        data: {}
-      - set_conversation_response: ' " "'
+          entity_id: switch.relu_voice_google_speaker_status
     - conditions:
       - condition: trigger
         id:
-        - change to english jarvis
+        - kitchen display off
       sequence:
-      - service: select.select_first
+      - service: switch.turn_off
         metadata: {}
         data: {}
         target:
-          entity_id: select.visual_espvoice_pipeline_assist #pipeline of Esp32Voice satellite change with yours
-      - service: select.select_next
-        metadata: {}
-        data: {}
-        target:
-          entity_id: select.visual_espvoice_pipeline_assist #pipeline of Esp32Voice satellite change with yours
-      - service: shell_command.english_jarvis_responses
-        data: {}
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 1
-          milliseconds: 0
-      - service: shell_command.random_responses
-        data: {}
-      - set_conversation_response: '" " '
-    - conditions:
-      - condition: trigger
-        id:
-        - change to romanian sheila
-      sequence:
-      - service: select.select_last
-        metadata: {}
-        data: {}
-        target:
-          entity_id: select.visual_espvoice_pipeline_assist #pipeline of Esp32Voice satellite change with yours
-      - service: shell_command.romanian_sheila_responses
-        data: {}
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 1
-          milliseconds: 0
-      - service: shell_command.random_responses
-        data: {}
-      - set_conversation_response: ' " "'
+          entity_id: switch.relu_voice_google_speaker_status
+    - conditions: []
+      sequence: []
   mode: single
-
+- id: '1711101868158'
+  alias: Assist Change Assistants
+  description: ''
+  trigger:
+  - platform: conversation
+    command:
+    - Aș vrea să vorbesc cu Jarvis
+    - Aș vrea să vorbesc cu Gearvis
+    - Speak  romanian
+    id: JarvisRo
+  - platform: conversation
+    command:
+    - Aș vrea să vorbesc în engleză
+    id: JarvisEn
+  - platform: conversation
+    command:
+    - Aș vrea să vorbesc cu șeila
+    - Aș vrea să vorbesc cu che la
+    id: SheilaRo
+  - platform: conversation
+    command:
+    - Aș vrea să vorbesc cu Roumi
+    - Aș vrea să vorbesc cu roaming
+    - Aș vrea să vorbesc cu romi
+    id: RoomieRo
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - JarvisRo
+      sequence:
+      - service: select.select_option
+        metadata: {}
+        data:
+          option: Jarvis
+        target:
+          entity_id: select.relu_voice_assistant_select
+      - service: select.select_option
+        metadata: {}
+        data:
+          option: Jarvis
+        target:
+          entity_id: select.relu_voice_pipeline_assist
+      - service: conversation.process
+        metadata: {}
+        data:
+          agent_id: homeassistant
+          text: ok
+    - conditions:
+      - condition: trigger
+        id:
+        - JarvisEn
+      sequence:
+      - service: select.select_option
+        metadata: {}
+        data:
+          option: JarvisEn
+        target:
+          entity_id: select.relu_voice_assistant_select
+      - service: select.select_option
+        metadata: {}
+        data:
+          option: JarvisEn
+        target:
+          entity_id: select.relu_voice_pipeline_assist
+    - conditions:
+      - condition: trigger
+        id:
+        - SheilaRo
+      sequence:
+      - service: select.select_option
+        metadata: {}
+        data:
+          option: Sheila
+        target:
+          entity_id: select.relu_voice_assistant_select
+      - service: select.select_option
+        metadata: {}
+        data:
+          option: Sheila
+        target:
+          entity_id: select.relu_voice_pipeline_assist
+    - conditions:
+      - condition: trigger
+        id:
+        - RoomieRo
+      sequence:
+      - service: select.select_option
+        metadata: {}
+        data:
+          option: Roomie
+        target:
+          entity_id: select.relu_voice_assistant_select
+      - service: select.select_option
+        metadata: {}
+        data:
+          option: Roomie
+        target:
+          entity_id: select.relu_voice_pipeline_assist
+  mode: single
