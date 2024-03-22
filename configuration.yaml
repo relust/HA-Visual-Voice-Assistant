@@ -1,7 +1,3 @@
-shell_command:
-  roomie_gifs: bash /config/www/gifs/change_to_roomie_gifs.sh
-  jarvis_gifs: bash /config/www/gifs/change_to_jarvis_gifs.sh
-  sheila_gifs: bash /config/www/gifs/change_to_sheila_gifs.sh
 homeassistant:
   media_dirs:
     local: /media
