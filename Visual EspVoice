@@ -8,16 +8,37 @@ substitutions:
   api_encription_key: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"# copy api key from your configuration
   ota_password: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"# copy ota passwowrd from your configuration
   #################################################
-  external_media_player: "media_player.office_speaker"
+  external_media_player: "media_player.boxa_din_bucatarie"
   browser_id: "ha_display_browser" #android tablet browser_id from browser_mod
-  display_switch: "switch.ha_display_ecran"# android tablet display switch from fully kiosk browser
-  speech_url: "http://192.168.0.xxx:8123/local/gifs/sheila_speech.gif" 
-  listen_url: "http://192.168.0.xxx:8123/local/gifs/sheila_listen.gif"
+  display_switch: "light.ha_display_browser_screen"# android tablet display switch from fully kiosk browser
+  gifs_dir: "http://192.168.0.xxx:8123/local/gifs/"
   silent_sound: "media-source://media_source/gifs/5minsilence.wav"
+  assistant1: "Jarvis" # the name exactly as it is in the gifs directory without "_speech.gif"
+  assistant2: "JarvisEn"
+  assistant3: "Roomie"
+  assistant4: "Sheila"
   tts_service: "edge_tts"
-  tts_language: "ro-RO-AlinaNeural"
-  random_messages: "{{ ['how can I help you', 'yes, im listening', 'how can assist you'] | random }}"  
-  #random_messages: "{{ ['cu ce pot să te ajut', 'spune te rog', 'da, te ascult'] | random }}"
+  tts_language1: "ro-RO-EmilNeural"  #en-US-ChristopherNeural / ro-RO-EmilNeural
+  tts_language2: "en-US-ChristopherNeural" #en-US-MichelleNeural / ro-RO-AlinaNeural
+  tts_language3: "ro-RO-AlinaNeural" #en-US-JennyNeural / ro-RO-AlinaNeural
+  tts_language4: "ro-RO-AlinaNeural" #en-US-JennyNeural / ro-RO-AlinaNeural
+  random_messages1: "{{ ['cu ce pot să te ajut', 'spune te rog', 'da, te ascult'] | random }}"  
+  random_messages2: "{{ ['how can I help you', 'yes, im listening', 'how can assist you'] | random }}" 
+  random_messages3: "{{ ['cu ce pot să te ajut', 'spune te rog', 'da, te ascult'] | random }}"
+  random_messages4: "{{ ['cu ce pot să te ajut', 'spune te rog', 'da, te ascult'] | random }}"
+globals:
+  - id: speech_url
+    type: std::string
+    restore_value: no
+  - id: listen_url
+    type: std::string
+    restore_value: no
+  - id: tts_language
+    type: std::string
+    restore_value: no
+  - id: random_messages
+    type: std::string
+    restore_value: no
 
 esphome:
   name: ${name}
@@ -25,6 +46,7 @@ esphome:
   on_boot:
      - priority: -100
        then:
+
          - light.turn_on:
              id: led
              effect: "Slow Pulse"
@@ -93,6 +115,7 @@ wifi:
     password: ${wifi_ap_password}
 captive_portal:
 
+
 external_components:
   - source: github://pr#5230
     components:
@@ -156,7 +179,7 @@ voice_assistant:
 #         level: "90%"
 #    - delay: 100ms
 #    - output.turn_off: buzzer
-
+    - script.execute: assistant_set
     - switch.turn_on: mute_pin 
     #- switch.turn_off: use_wake_word" #If you don't have the possibility to modify the microphone wiring for mute switch
  #   - delay: 100ms
@@ -169,26 +192,35 @@ voice_assistant:
         service: media_player.play_media      
         data_template:
           entity_id: ${external_media_player}
-          media_content_id: "media-source://tts/${tts_service}?message=${random_messages}&language=${tts_language}"
-          media_content_type: "audio"
-          extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${speech_url}" }]}}'
-#    - delay: 100ms
-#    - homeassistant.service:
-#        service: browser_mod.popup     
-#        data_template:
-#          entity_id: ${external_media_player}
-#          browser_id: ${browser_id}
-#          content: '{"type": "picture", "image": "${speech_url}"}'
-#          style: "--popup-min-width: 800px"
+          media_content_id: !lambda |-
+            return "media-source://tts/${tts_service}?message= \"" + id(random_messages) + "\"&language=" + id(tts_language);
+          media_content_type: "audio" 
+          extra: !lambda |-
+            return "{\"metadata\": {\"metadataType\": 3, \"title\": \" \", \"images\": [{\"url\": \"" + id(speech_url) + "\" }]}}";
+
+          
+
+          
+    - delay: 100ms
+    - homeassistant.service:
+        service: browser_mod.popup     
+        data_template:
+          entity_id: ${external_media_player}
+          browser_id: ${browser_id}
+          content: !lambda |-
+            return "{\"type\": \"picture\", \"image\": \"" + id(speech_url) + "\"}";
+          style: "--popup-min-width: 800px"
+
+
 
 #########  THIS IS FOR GOOGLE HOME SPEAKERS CHIME SOUND #######
-#    - if:
-#        condition:
-#          switch.is_on: google_speaker_status
-#        then:
-#          - delay: 200ms 
-#        else:
-#          - delay: 2s
+    - if:
+        condition:
+          switch.is_on: google_speaker_status
+        then:
+          - delay: 200ms 
+        else:
+          - delay: 2s
     - delay: 1300ms             
     - homeassistant.service:
         service: media_player.play_media      
@@ -196,15 +228,17 @@ voice_assistant:
           entity_id: ${external_media_player}
           media_content_id: ${silent_sound}
           media_content_type: "audio"
-          extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${listen_url}" }]}}'
-#    - delay: 100ms
-#    - homeassistant.service:
-#        service: browser_mod.popup     
-#        data_template:
-#          entity_id: ${external_media_player}
-#          browser_id: ${browser_id}
-#          content: '{"type": "picture", "image": "${listen_url}"}'
-#          style: "--popup-min-width: 800px" 
+          extra: !lambda |-
+            return "{\"metadata\": {\"metadataType\": 3, \"title\": \" \", \"images\": [{\"url\": \"" + id(listen_url) + "\" }]}}";
+    - delay: 100ms
+    - homeassistant.service:
+        service: browser_mod.popup     
+        data_template:
+          entity_id: ${external_media_player}
+          browser_id: ${browser_id}
+          content: !lambda |-
+            return "{\"type\": \"picture\", \"image\": \"" + id(listen_url) + "\"}";
+          style: "--popup-min-width: 800px" 
     - switch.turn_off: mute_pin
     #- voice_assistant.start#If you don't have the possibility to modify the microphone wiring for mute switch
 
@@ -242,15 +276,18 @@ voice_assistant:
           entity_id: ${external_media_player}
           media_content_id: !lambda return x;
           media_content_type: "music"
-          extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${speech_url}" }]}}'
-#    - delay: 100ms
-#    - homeassistant.service:
-#        service: browser_mod.popup     
-#        data_template:
-#          entity_id: ${external_media_player}
-#          browser_id: ${browser_id}
-#          content: '{"type": "picture", "image": "${speech_url}"}'
-#          style: "--popup-min-width: 800px"
+          extra: !lambda |-
+            return "{\"metadata\": {\"metadataType\": 3, \"title\": \" \", \"images\": [{\"url\": \"" + id(speech_url) + "\" }]}}";
+
+    - delay: 100ms
+    - homeassistant.service:
+        service: browser_mod.popup     
+        data_template:
+          entity_id: ${external_media_player}
+          browser_id: ${browser_id}
+          content: !lambda |-
+            return "{\"type\": \"picture\", \"image\": \"" + id(speech_url) + "\"}";
+          style: "--popup-min-width: 800px"
 
   on_tts_stream_end:
     - delay: 100ms
@@ -261,7 +298,15 @@ voice_assistant:
         data_template:
           entity_id: ${external_media_player}
           browser_id: ${browser_id}
-      
+    - delay: 100ms             
+    - homeassistant.service:
+        service: media_player.play_media      
+        data_template:
+          entity_id: ${external_media_player}
+          media_content_id: ${silent_sound}
+          media_content_type: "audio"
+          extra: !lambda |-
+            return "{\"metadata\": {\"metadataType\": 3, \"title\": \" \", \"images\": [{\"url\": \"" + id(listen_url) + "\" }]}}";      
   on_end:
     - delay: 100ms
     - script.execute: reset_led
@@ -361,7 +406,52 @@ light:
           min_brightness: 30%
           max_brightness: 60%
 
-script:
+script:  
+  - id: assistant_set
+    then:    
+      - lambda: |-
+          std::string selected_language;
+          if (id(assistant_select).state == "${assistant1}") {
+            selected_language = "${tts_language1}";
+          } else if (id(assistant_select).state == "${assistant2}") {
+            selected_language = "${tts_language2}";
+          } else if (id(assistant_select).state == "${assistant3}") {
+            selected_language = "${tts_language3}";
+          } else if (id(assistant_select).state == "${assistant4}") {
+            selected_language = "${tts_language4}";            
+          } else {
+            selected_language = "${tts_language1}";
+          }
+          id(tts_language) = selected_language;
+
+      - lambda: |-
+          std::string selected_message;
+          if (id(assistant_select).state == "${assistant1}") {
+            selected_message = "${random_messages1}";
+          } else if (id(assistant_select).state == "${assistant2}") {
+            selected_message = "${random_messages2}";
+          } else if (id(assistant_select).state == "${assistant3}") {
+            selected_message = "${random_messages3}";
+          } else if (id(assistant_select).state == "${assistant4}") {
+            selected_message = "${random_messages4}";            
+          } else {
+            selected_message = "${random_messages1}";
+          }
+          id(random_messages) = selected_message;
+
+      - lambda: |-
+          std::string image_url = "${gifs_dir}";
+          image_url += id(assistant_select).state;
+          image_url += "_speech.gif";
+          id(speech_url) = image_url;
+      - lambda: |-
+          std::string image_url = "${gifs_dir}";
+          image_url += id(assistant_select).state;
+          image_url += "_listen.gif";
+          id(listen_url) = image_url;
+
+
+
   - id: reset_led
     then:
       - if:
@@ -380,6 +470,17 @@ script:
           else:
             - light.turn_off: led
 
+select:
+  - platform: template
+    id: assistant_select
+    name: "Assistant select"
+    optimistic: true
+    restore_value: true
+    options:
+      - "${assistant1}"
+      - "${assistant2}"
+      - "${assistant3}"
+      - "${assistant4}"
 switch:
   - platform: template
     name: Use wake word
@@ -409,13 +510,11 @@ switch:
       number: GPIO17
       inverted: true
 #########  THIS IS FOR GOOGLE HOME SPEAKERS CHIME SOUND - IS NEED A AUTOMATION IN HA TO TURN OFF WHEN SPEAKER IS OFF #######
-#  - platform: template
-#    name: Google speaker status
-#    id: google_speaker_status
-#    optimistic: true
-#    restore_mode: RESTORE_DEFAULT_ON
-
-
+  - platform: template
+    name: Google speaker status
+    id: google_speaker_status
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
 
 
 
