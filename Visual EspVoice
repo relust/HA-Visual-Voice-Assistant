@@ -8,7 +8,7 @@ substitutions:
   api_encription_key: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"# copy api key from your configuration
   ota_password: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"# copy ota passwowrd from your configuration
   #################################################
-  external_media_player: "media_player.boxa_din_bucatarie"
+  external_media_player: "media_player.ha_display_browser"
   browser_id: "ha_display_browser" #android tablet browser_id from browser_mod
   display_switch: "light.ha_display_browser_screen"# android tablet display switch from fully kiosk browser
   gifs_dir: "http://192.168.0.xxx:8123/local/gifs/"
@@ -197,31 +197,29 @@ voice_assistant:
           media_content_type: "audio" 
           extra: !lambda |-
             return "{\"metadata\": {\"metadataType\": 3, \"title\": \" \", \"images\": [{\"url\": \"" + id(speech_url) + "\" }]}}";
-
-          
-
+      
           
     - delay: 100ms
-    - homeassistant.service:
-        service: browser_mod.popup     
-        data_template:
-          entity_id: ${external_media_player}
-          browser_id: ${browser_id}
-          content: !lambda |-
-            return "{\"type\": \"picture\", \"image\": \"" + id(speech_url) + "\"}";
-          style: "--popup-min-width: 800px"
+#    - homeassistant.service:
+#        service: browser_mod.popup     
+#       data_template:
+#          entity_id: ${external_media_player}
+#          browser_id: ${browser_id}
+#          content: !lambda |-
+#            return "{\"type\": \"picture\", \"image\": \"" + id(speech_url) + "\"}";
+#          style: "--popup-min-width: 800px"
 
 
 
 #########  THIS IS FOR GOOGLE HOME SPEAKERS CHIME SOUND #######
-    - if:
-        condition:
-          switch.is_on: google_speaker_status
-        then:
-          - delay: 200ms 
-        else:
-          - delay: 2s
-    - delay: 1300ms             
+#    - if:
+#        condition:
+#          switch.is_on: google_speaker_status
+#        then:
+#          - delay: 200ms 
+#        else:
+#          - delay: 2s
+#    - delay: 1300ms             
     - homeassistant.service:
         service: media_player.play_media      
         data_template:
@@ -231,14 +229,14 @@ voice_assistant:
           extra: !lambda |-
             return "{\"metadata\": {\"metadataType\": 3, \"title\": \" \", \"images\": [{\"url\": \"" + id(listen_url) + "\" }]}}";
     - delay: 100ms
-    - homeassistant.service:
-        service: browser_mod.popup     
-        data_template:
-          entity_id: ${external_media_player}
-          browser_id: ${browser_id}
-          content: !lambda |-
-            return "{\"type\": \"picture\", \"image\": \"" + id(listen_url) + "\"}";
-          style: "--popup-min-width: 800px" 
+#    - homeassistant.service:
+#        service: browser_mod.popup     
+#        data_template:
+#          entity_id: ${external_media_player}
+#          browser_id: ${browser_id}
+#          content: !lambda |-
+#            return "{\"type\": \"picture\", \"image\": \"" + id(listen_url) + "\"}";
+#         style: "--popup-min-width: 800px" 
     - switch.turn_off: mute_pin
     #- voice_assistant.start#If you don't have the possibility to modify the microphone wiring for mute switch
 
@@ -279,25 +277,25 @@ voice_assistant:
           extra: !lambda |-
             return "{\"metadata\": {\"metadataType\": 3, \"title\": \" \", \"images\": [{\"url\": \"" + id(speech_url) + "\" }]}}";
 
-    - delay: 100ms
-    - homeassistant.service:
-        service: browser_mod.popup     
-        data_template:
-          entity_id: ${external_media_player}
-          browser_id: ${browser_id}
-          content: !lambda |-
-            return "{\"type\": \"picture\", \"image\": \"" + id(speech_url) + "\"}";
-          style: "--popup-min-width: 800px"
+#    - delay: 100ms
+#    - homeassistant.service:
+#        service: browser_mod.popup     
+#        data_template:
+#         entity_id: ${external_media_player}
+#          browser_id: ${browser_id}
+#          content: !lambda |-
+#            return "{\"type\": \"picture\", \"image\": \"" + id(speech_url) + "\"}";
+#          style: "--popup-min-width: 800px"
 
   on_tts_stream_end:
     - delay: 100ms
     - script.execute: reset_led
-    - delay: 100ms
-    - homeassistant.service:
-        service: browser_mod.close_popup     
-        data_template:
-          entity_id: ${external_media_player}
-          browser_id: ${browser_id}
+#    - delay: 100ms
+#    - homeassistant.service:
+#        service: browser_mod.close_popup     
+#        data_template:
+#          entity_id: ${external_media_player}
+#          browser_id: ${browser_id}
     - delay: 100ms             
     - homeassistant.service:
         service: media_player.play_media      
@@ -510,12 +508,8 @@ switch:
       number: GPIO17
       inverted: true
 #########  THIS IS FOR GOOGLE HOME SPEAKERS CHIME SOUND - IS NEED A AUTOMATION IN HA TO TURN OFF WHEN SPEAKER IS OFF #######
-  - platform: template
-    name: Google speaker status
-    id: google_speaker_status
-    optimistic: true
-    restore_mode: RESTORE_DEFAULT_ON
-
-
-
-
+#  - platform: template
+#    name: Google speaker status
+#    id: google_speaker_status
+#    optimistic: true
+#    restore_mode: RESTORE_DEFAULT_ON
