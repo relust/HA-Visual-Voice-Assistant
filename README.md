@@ -8,6 +8,9 @@ To achieve this, I will use an esp32 satellite programmed with [ESPHome](https:/
 
 ![Rommie_tubnail](https://github.com/relust/HA-Visual-Voice-Assistant/assets/71765276/afee3608-5bfd-4cc1-88f2-278d1601d02c)
 
+![vs240326-001](https://github.com/relust/HA-Visual-Voice-Assistant/assets/71765276/536f8132-3528-4861-ada1-321ff7859fde)
+
+
  Here's a video tutorial:
 
 [https://www.youtube.com/watch?v=1bBOoUhnF4A&t=166s](https://www.youtube.com/watch?v=1bBOoUhnF4A&t=166s)
