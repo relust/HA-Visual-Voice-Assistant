@@ -219,17 +219,6 @@ microphone:
 ```
 - If you don't use the "mute_pin" switch, uncomment the wake word listening restart to "on_end"
 
-- To the "switch" section add mute switch. This is done by connecting the L/R pin from the microphone to a digital pin. When that pin is powered, the microphone is turned on.
-```
-switch:
-  - platform: gpio
-    pin: 
-      number: GPIO17
-      inverted: true
-    name: MUTE
-    id: mute_pin
-    restore_mode: RESTORE_DEFAULT_OFF
-```
 - On script add assistant_set script
 
  ```
@@ -292,6 +281,18 @@ select:
       - "${assistant3}"
       - "${assistant4}"
 ```
+- To the "switch" section add mute switch. This is done by connecting the L/R pin from the microphone to a digital pin. When that pin is powered, the microphone is turned on.
+```
+switch:
+  - platform: gpio
+    pin: 
+      number: GPIO17
+      inverted: true
+    name: MUTE
+    id: mute_pin
+    restore_mode: RESTORE_DEFAULT_OFF
+```
+
 - If you use a display or a google speaker, in the switch sectionn, add a virtual switch that we will use in the automation that will transmit to the Esp32 satellite if the google speaker is on or off to adjust the delay for the initial response
  ``` 
 switch:
