@@ -8,9 +8,9 @@ To achieve this, I will use an esp32 satellite programmed with [ESPHome](https:/
 
 ![Rommie_tubnail](https://github.com/relust/HA-Visual-Voice-Assistant/assets/71765276/afee3608-5bfd-4cc1-88f2-278d1601d02c)
 
- Here's a small demo:
+ Here's a video tutorial:
 
-[https://youtu.be/EcL6o62Vnoo](https://youtu.be/EcL6o62Vnoo)
+[https://www.youtube.com/watch?v=1bBOoUhnF4A&t=166s](https://www.youtube.com/watch?v=1bBOoUhnF4A&t=166s)
 
 ## Features
 
@@ -18,7 +18,9 @@ To achieve this, I will use an esp32 satellite programmed with [ESPHome](https:/
 - service exposed in HA to start and stop the voice assistant from another device/trigger
 - visual feedback of the wake word listening/audio recording/success/error status via the satellite LEDs
 - visual feedback on the tablet display
+- changing assistants and language from the graphical interface or with voice commands.
 - uses touch control on the satellite for toggle wake word activation with long touch, and start/stop listening when wake word detection is off with short touch.
+
 
 ## Pre-requisites
 
@@ -35,19 +37,40 @@ To achieve this, I will use an esp32 satellite programmed with [ESPHome](https:/
 - In the EspHome addon interface to the satellite you are making, copy the code from the ”Visual EspVoice” file and and modify the code with your data.
   
 - If you already have your Esp32 satellite setup, make the following changes:
-- Add the following lines of code to the substitutions and complete with your data:
+- Add the following lines of code to the substitutions and globals and complete with your data:
 ```
 substitutions:
-  external_media_player: "media_player.office_speaker"
+  external_media_player: "media_player.ha_display_browser"
   browser_id: "ha_display_browser" #android tablet browser_id from browser_mod
-  display_switch: "switch.ha_display_ecran"# android tablet display switch from fully kiosk browser
-  speech_url: "http://192.168.0.xxx:8123/local/gifs/sheila_speech.gif" 
-  listen_url: "http://192.168.0.xxx:8123/local/gifs/sheila_listen.gif"
-  silent_sound: "media-source://media_source/local/5minsilence.wav"
+  display_switch: "light.ha_display_browser_screen"# android tablet display switch from fully kiosk browser
+  gifs_dir: "http://192.168.0.xxx:8123/local/gifs/"
+  silent_sound: "media-source://media_source/gifs/5minsilence.wav"
+  assistant1: "Jarvis" # the name exactly as it is in the gifs directory without "_speech.gif"
+  assistant2: "JarvisEn"
+  assistant3: "Roomie"
+  assistant4: "Sheila"
   tts_service: "edge_tts"
-  tts_language: "ro-RO-AlinaNeural"
-  random_messages: "{{ ['how can I help you', 'yes, im listening', 'how can assist you'] | random }}"  
-  #random_messages: "{{ ['cu ce pot să te ajut', 'spune te rog', 'da, te ascult'] | random }}"
+  tts_language1: "ro-RO-EmilNeural"  #en-US-ChristopherNeural / ro-RO-EmilNeural
+  tts_language2: "en-US-ChristopherNeural" #en-US-MichelleNeural / ro-RO-AlinaNeural
+  tts_language3: "ro-RO-AlinaNeural" #en-US-JennyNeural / ro-RO-AlinaNeural
+  tts_language4: "ro-RO-AlinaNeural" #en-US-JennyNeural / ro-RO-AlinaNeural
+  random_messages1: "{{ ['cu ce pot să te ajut', 'spune te rog', 'da, te ascult'] | random }}"  
+  random_messages2: "{{ ['how can I help you', 'yes, im listening', 'how can assist you'] | random }}" 
+  random_messages3: "{{ ['cu ce pot să te ajut', 'spune te rog', 'da, te ascult'] | random }}"
+  random_messages4: "{{ ['cu ce pot să te ajut', 'spune te rog', 'da, te ascult'] | random }}"
+globals:
+  - id: speech_url
+    type: std::string
+    restore_value: no
+  - id: listen_url
+    type: std::string
+    restore_value: no
+  - id: tts_language
+    type: std::string
+    restore_value: no
+  - id: random_messages
+    type: std::string
+    restore_value: no
 ```
 - At "microphone" change the channel to "left"
 ```
@@ -61,6 +84,8 @@ microphone:
 ```
 - To "on_wake_word_detected" add these lines of code
 ```
+  on_wake_word_detected:
+    - script.execute: assistant_set
     - switch.turn_on: mute_pin 
     #- switch.turn_off: use_wake_word" #If you don't have the possibility to modify the microphone wiring for mute switch
  #   - delay: 100ms
@@ -69,21 +94,28 @@ microphone:
  #       data: 
  #         entity_id: ${display_switch}      
     - delay: 100ms
-     - homeassistant.service:
+    - homeassistant.service:
         service: media_player.play_media      
         data_template:
           entity_id: ${external_media_player}
-          media_content_id: "media-source://tts/${tts_service}?message=${random_messages}&language=${tts_language}"
-          media_content_type: "audio"
-          extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${speech_url}" }]}}'
-#    - delay: 100ms
+          media_content_id: !lambda |-
+            return "media-source://tts/${tts_service}?message= \"" + id(random_messages) + "\"&language=" + id(tts_language);
+          media_content_type: "audio" 
+          extra: !lambda |-
+            return "{\"metadata\": {\"metadataType\": 3, \"title\": \" \", \"images\": [{\"url\": \"" + id(speech_url) + "\" }]}}";
+      
+          
+    - delay: 100ms
 #    - homeassistant.service:
 #        service: browser_mod.popup     
-#        data_template:
+#       data_template:
 #          entity_id: ${external_media_player}
 #          browser_id: ${browser_id}
-#          content: '{"type": "picture", "image": "${speech_url}"}'
+#          content: !lambda |-
+#            return "{\"type\": \"picture\", \"image\": \"" + id(speech_url) + "\"}";
 #          style: "--popup-min-width: 800px"
+
+
 
 #########  THIS IS FOR GOOGLE HOME SPEAKERS CHIME SOUND #######
 #    - if:
@@ -93,22 +125,24 @@ microphone:
 #          - delay: 200ms 
 #        else:
 #          - delay: 2s
-    - delay: 1300ms             
+#    - delay: 1300ms             
     - homeassistant.service:
         service: media_player.play_media      
         data_template:
           entity_id: ${external_media_player}
           media_content_id: ${silent_sound}
           media_content_type: "audio"
-          extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${listen_url}" }]}}'
-#    - delay: 100ms
+          extra: !lambda |-
+            return "{\"metadata\": {\"metadataType\": 3, \"title\": \" \", \"images\": [{\"url\": \"" + id(listen_url) + "\" }]}}";
+    - delay: 100ms
 #    - homeassistant.service:
 #        service: browser_mod.popup     
 #        data_template:
 #          entity_id: ${external_media_player}
 #          browser_id: ${browser_id}
-#          content: '{"type": "picture", "image": "${listen_url}"}'
-#          style: "--popup-min-width: 800px" 
+#          content: !lambda |-
+#            return "{\"type\": \"picture\", \"image\": \"" + id(listen_url) + "\"}";
+#         style: "--popup-min-width: 800px" 
     - switch.turn_off: mute_pin
     #- voice_assistant.start#If you don't have the possibility to modify the microphone wiring for mute switch
 ```
@@ -119,20 +153,31 @@ microphone:
 ```
   on_tts_end: 
     - delay: 200ms
+    - light.turn_on:
+        id: led
+        blue: 0%
+        red: 0%
+        green: 100%
+        brightness: 60%
+        effect: none
+    - delay: 200ms
     - homeassistant.service:
         service: media_player.play_media
         data_template:
           entity_id: ${external_media_player}
           media_content_id: !lambda return x;
           media_content_type: "music"
-          extra: '{"metadata": {"metadataType": 3, "title": " ", "images": [{"url": "${speech_url}" }]}}'
+          extra: !lambda |-
+            return "{\"metadata\": {\"metadataType\": 3, \"title\": \" \", \"images\": [{\"url\": \"" + id(speech_url) + "\" }]}}";
+
 #    - delay: 100ms
 #    - homeassistant.service:
 #        service: browser_mod.popup     
 #        data_template:
-#          entity_id: ${external_media_player}
+#         entity_id: ${external_media_player}
 #          browser_id: ${browser_id}
-#          content: '{"type": "picture", "image": "${speech_url}"}'
+#          content: !lambda |-
+#            return "{\"type\": \"picture\", \"image\": \"" + id(speech_url) + "\"}";
 #          style: "--popup-min-width: 800px"
 ```
 - If you're using a tablet with a browser running the Home Assistant interface or the Home Assistant app, uncomment sections with the browser_mod.popup service
@@ -140,15 +185,28 @@ microphone:
 ```
   on_tts_stream_end:
     - delay: 100ms
+    - script.execute: reset_led
+#    - delay: 100ms
+#    - homeassistant.service:
+#        service: browser_mod.close_popup     
+#        data_template:
+#          entity_id: ${external_media_player}
+#          browser_id: ${browser_id}
+    - delay: 100ms             
     - homeassistant.service:
-        service: browser_mod.close_popup     
+        service: media_player.play_media      
         data_template:
           entity_id: ${external_media_player}
-          browser_id: ${browser_id}
+          media_content_id: ${silent_sound}
+          media_content_type: "audio"
+          extra: !lambda |-
+            return "{\"metadata\": {\"metadataType\": 3, \"title\": \" \", \"images\": [{\"url\": \"" + id(listen_url) + "\" }]}}"; 
 ```
 - Then these lines of code are added to "on__end"
 ```
  on_end:
+    - delay: 100ms
+    - script.execute: reset_led
     - delay: 100ms
     - switch.turn_off: mute_pin 
 #    - switch.turn_on: use_wake_word # this is if not have mute switch
@@ -172,6 +230,68 @@ switch:
     id: mute_pin
     restore_mode: RESTORE_DEFAULT_OFF
 ```
+- On script add assistant_set script
+
+ ```
+script:  
+  - id: assistant_set
+    then:    
+      - lambda: |-
+          std::string selected_language;
+          if (id(assistant_select).state == "${assistant1}") {
+            selected_language = "${tts_language1}";
+          } else if (id(assistant_select).state == "${assistant2}") {
+            selected_language = "${tts_language2}";
+          } else if (id(assistant_select).state == "${assistant3}") {
+            selected_language = "${tts_language3}";
+          } else if (id(assistant_select).state == "${assistant4}") {
+            selected_language = "${tts_language4}";            
+          } else {
+            selected_language = "${tts_language1}";
+          }
+          id(tts_language) = selected_language;
+
+      - lambda: |-
+          std::string selected_message;
+          if (id(assistant_select).state == "${assistant1}") {
+            selected_message = "${random_messages1}";
+          } else if (id(assistant_select).state == "${assistant2}") {
+            selected_message = "${random_messages2}";
+          } else if (id(assistant_select).state == "${assistant3}") {
+            selected_message = "${random_messages3}";
+          } else if (id(assistant_select).state == "${assistant4}") {
+            selected_message = "${random_messages4}";            
+          } else {
+            selected_message = "${random_messages1}";
+          }
+          id(random_messages) = selected_message;
+
+      - lambda: |-
+          std::string image_url = "${gifs_dir}";
+          image_url += id(assistant_select).state;
+          image_url += "_speech.gif";
+          id(speech_url) = image_url;
+      - lambda: |-
+          std::string image_url = "${gifs_dir}";
+          image_url += id(assistant_select).state;
+          image_url += "_listen.gif";
+          id(listen_url) = image_url;
+```
+- Add assistants selector
+
+```
+select:
+  - platform: template
+    id: assistant_select
+    name: "Assistant select"
+    optimistic: true
+    restore_value: true
+    options:
+      - "${assistant1}"
+      - "${assistant2}"
+      - "${assistant3}"
+      - "${assistant4}"
+```
 - If you use a display or a google speaker, in the switch sectionn, add a virtual switch that we will use in the automation that will transmit to the Esp32 satellite if the google speaker is on or off to adjust the delay for the initial response
  ``` 
 switch:
@@ -186,7 +306,7 @@ switch:
 - Check "Allow the device to make Home Assistant service calls" from the "CONFIGURE" button of the Esp32 satellite.
 - On local directory of Home Assistant, `/config/www`, create a new directory ”gifs” where copy the content of [www/gifs directory](https://github.com/relust/HA-Visual-Voice-Assistant/tree/main/www/gifs) from this github page.
 - Copy content of  [configuration.yaml](https://github.com/relust/HA-Visual-Voice-Assistant/blob/main/configuration.yaml) to configuration.yaml directory of Home Assistant to make the shell services  change assistants scripts from `/config/www/gifs` directory.
-- Copy content of  [automation.yaml](https://github.com/relust/HA-Visual-Voice-Assistant/blob/main/automation.yaml) and make the necessary changes according to your configuration to make automations for change assistants.
+- Copy content of  [automation.yaml](https://github.com/relust/HA-Visual-Voice-Assistant/blob/main/automation.yaml) and make the necessary changes according to your configuration to make automations for change assistants and google speaker status.
 - Restart Home Assistant.
-- On "Developer Tools/services" page tape "shell_command.jarvis_gifs", press CALL SERVICE and check if the script is executed.
-- On "Settings/automations" page search "Assist change language" automation and and check if the automation and check if the automation is good and is executed when the wake word is detected.
+- On "Settings/automations" page search "Assist Google speaker status" automation and  check if the Esp32 satellite Google speaker status switch is updated when the associated google speaker is turned off or on.
+- On "Settings/automations" page search "Assist Change Assistants" automation and check if assistants and pipelines are changed by voice commands.
